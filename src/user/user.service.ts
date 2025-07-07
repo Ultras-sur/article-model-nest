@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'entity/user.entity';
+import { User } from '../../entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDTO } from './create-user.dto';
 const bcrypt = require('bcryptjs');

@@ -1,10 +1,10 @@
-import { Controller, Patch, Res, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Patch, Res, UseGuards } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Body, Param, Post, Get, Query, UseInterceptors } from '@nestjs/common';
 import { FindOptionsDto } from './dto/find-options.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
+import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
 import { CacheInterceptor, CacheTTL, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Inject } from '@nestjs/common';
@@ -15,6 +15,8 @@ export class ArticleController {
     @Inject(CACHE_MANAGER) private cacheService: Cache) {}
   
   @Get()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(30)
   async findAllArticles(@Query() query: FindOptionsDto) {
     console.log(query);
     const articles = await this.articleService.getArticlesPaginate(query);
@@ -29,6 +31,7 @@ export class ArticleController {
     return articles;
   }
 
+  @CacheTTL(30)
   @Get(':id')
   async findArticle(@Param('id') id: string) {
     const cachedData = await this.cacheService.get(id.toString());
@@ -50,7 +53,16 @@ export class ArticleController {
   @UseGuards(AuthenticatedGuard)
   @Patch(':id')
   async updateArticle(@Param('id') id, @Body() updateArticle: UpdateArticleDto) {
+    await this.cacheService.del(id.toString());
     const updatedArticle = await this.articleService.updateArticle(id, updateArticle);
     return updatedArticle;
   }
+
+  @UseGuards(AuthenticatedGuard)
+  @Delete(':id')
+  async deleteArticle (@Res() res, @Param('id') id) {
+    await this.articleService.deleteArticle(id);
+    return res.redirect('/');
+  }
+
 }

@@ -78,4 +78,17 @@ export class ArticleService {
     await this.articleRepository.update(id, updateArticle);
     return this.getArticle(id);
   }
+
+  async deleteArticle(id: string): Promise<Article> {
+    const deletedArticle = await this.getArticle(id);
+    try {
+      if (!deletedArticle) throw new Error('Not found');
+      await this.articleRepository.delete(deletedArticle.id);
+    } catch (err) {
+      if (err) {
+        throw new HttpException(`Article is not deleted: ${err.message}` , HttpStatus.BAD_REQUEST);
+      }
+    }
+    return deletedArticle;
+  }
 }
