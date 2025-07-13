@@ -14,5 +14,6 @@ export class FindOptionsDto {
     this.page = params?.page ?? 1;
     this.author = params?.author ?? null;
     this.created = params?.created ?? null;
+    this.take = params?.take ?? 10
   }
 }

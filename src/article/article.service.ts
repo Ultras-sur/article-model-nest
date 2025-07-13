@@ -51,23 +51,26 @@ export class ArticleService {
       skip: findOptions.skip,
       take: findOptions.take,
     });
-    console.log(findOptions.skip)
     const [ articles, articlesCount ] = articlesAndCount;
-    console.log(articlesAndCount)
     const pageMeta = new PageMetaDTO(articlesCount, findOptions);
     return new PageDTO(articles, pageMeta);
   }
 
+  async findArticlesAndCount(options = {}): Promise<[Article[], number]> {
+    return this.articleRepository.findAndCount(options);
+  }
+
   async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
-    const cretedArticle = this.articleRepository.create(createArticleDto);
+    console.log(createArticleDto)
+    const createdArticle = this.articleRepository.create(createArticleDto);
     try {
-      await this.articleRepository.save(cretedArticle);
+      await this.articleRepository.save(createdArticle);
     } catch(error) {
         if (error) {
           throw new HttpException('Article is not created', HttpStatus.BAD_REQUEST);
-        }
-    return cretedArticle;
+        }   
     }
+    return createdArticle;
   }
 
   async updateArticle(id: string, updateArticle: UpdateArticleDto): Promise<Article | null> {
