@@ -5,6 +5,18 @@ import { Repository } from 'typeorm';
 import { CreateUserDTO } from './create-user.dto';
 const bcrypt = require('bcryptjs');
 
+export class SanitizedUser {
+  id:string;
+  name: string;
+  login: string;
+
+  constructor(user) {
+    this.id = user.id;
+    this.name = user.name;
+    this.login = user.login;
+  } 
+}
+
 
 @Injectable()
 export class UserService {
@@ -23,7 +35,7 @@ export class UserService {
         if (!findedUser) {
             throw new NotFoundException(`User with id: ${id} is not found!`);
         }
-        return findedUser;     
+        return findedUser;
     }
 
     async findUserByLogin(login: string): Promise<User | null> {
@@ -42,15 +54,13 @@ export class UserService {
         return findedUser;
     }
 
-    async createUser(createUserDTO: CreateUserDTO) : Promise<User> {
-        console.log(0)
+    async createUser(createUserDTO: CreateUserDTO) : Promise<SanitizedUser> {
         const {name, login, password} = createUserDTO;
-        console.log(1)
         const userIsExist = await this.findUserByLogin(login);
         
-        console.log(2)
         if (userIsExist) {
-            throw new HttpException(`User with login ${login} is already exists!`, HttpStatus.BAD_REQUEST);
+            //throw new HttpException(`User with login ${login} is already exists!`, HttpStatus.BAD_REQUEST);
+            throw new Error(`User with login ${login} is already exists!`)
         }
         let createdUser;
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -67,8 +77,22 @@ export class UserService {
         return this.sanitizeUser(createdUser);
     }
 
-    sanitizeUser(user) {
-    const { password, ...sanitizedUser } = user;
-    return sanitizedUser;
+    async deleteUser(id: string): Promise<User> {
+        const deletedUser = await this.getUser(id);
+    try {
+      if (!deletedUser) throw new Error('Not found');
+      await this.userRepository.delete(deletedUser.id);
+    } catch (err) {
+      if (err) {
+        throw new HttpException(`User is not deleted: ${err.message}` , HttpStatus.BAD_REQUEST);
+      }
+    }
+    return deletedUser;
+    }
+
+    sanitizeUser(user: User): SanitizedUser {
+        //const { password, ...sanitizedUser } = user;
+        //return sanitizedUser;
+    return new SanitizedUser(user);
   }
 }

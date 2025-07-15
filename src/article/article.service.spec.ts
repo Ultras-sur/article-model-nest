@@ -101,7 +101,7 @@ describe('ArticleService', () => {
     beforeEach(async () => {
       articlesAndCount = await articleService.findArticlesAndCount({});
     });
-    it('returned page instance', async () => {
+    it('returned instance of page', async () => {
       const page = await articleService.getArticlesPaginate(
         new FindOptionsDto({}),
       );
