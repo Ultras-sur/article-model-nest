@@ -2,8 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SanitizedUser, UserService } from './user.service';
 import { User } from './../../entity/user.entity';
 import { AppModule } from './../../src/app.module';
-import { HttpException, INestApplication } from '@nestjs/common';
-import { TableUnique } from 'typeorm';
+import { INestApplication } from '@nestjs/common';
 
 type MakeOptional<T, K extends keyof T> =
     Omit<T, K> & { [P in K]?: T[P] };
@@ -55,7 +54,7 @@ describe('UserService', () => {
     it('throw error for unique login', async () => {
       await Promise.all(fixtures.map(async user => {
         //const createdUser = await userService.createUser(user);
-        expect(async () => await userService.createUser(user)).rejects.toThrow();
+        expect(async () => await userService.createUser(user)).rejects.toThrow('is already exists');
       }))
     })
   })

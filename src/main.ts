@@ -7,6 +7,7 @@ import { RedisStore } from "connect-redis"
 import * as session from 'express-session';
 import cookieParser = require('cookie-parser');
 import passport = require('passport');
+import getLogLevels from '../utils/logLevels';
 require('dotenv').config();
 
 
@@ -15,6 +16,7 @@ const logger = new Logger();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  logger: getLogLevels(process.env.NODE_ENV === 'production')
   app.useGlobalPipes(
   new ValidationPipe({
     transform: true,

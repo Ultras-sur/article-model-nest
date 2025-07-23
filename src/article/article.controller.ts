@@ -1,7 +1,7 @@
 import { Controller, Delete, Patch, Res, UseGuards } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { Body, Param, Post, Get, Query, UseInterceptors } from '@nestjs/common';
+import { Body, Param, Post, Get, Query, UseInterceptors, Logger  } from '@nestjs/common';
 import { FindOptionsDto } from './dto/find-options.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
@@ -11,6 +11,7 @@ import { Inject } from '@nestjs/common';
 
 @Controller('article')
 export class ArticleController {
+  private readonly logger = new Logger(ArticleController.name);
   constructor(private readonly articleService: ArticleService, 
     @Inject(CACHE_MANAGER) private cacheService: Cache) {}
   
@@ -18,7 +19,6 @@ export class ArticleController {
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(30)
   async findAllArticles(@Query() query: FindOptionsDto) {
-    console.log(query);
     const articles = await this.articleService.getArticlesPaginate(query);
     return articles;
   }

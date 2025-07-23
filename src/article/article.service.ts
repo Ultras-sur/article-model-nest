@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Article } from '../../entity/article.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,14 +10,16 @@ import { CreateArticleDto } from './dto/create-article.dto';
 
 @Injectable()
 export class ArticleService {
+private readonly logger = new Logger(ArticleService.name);
   constructor(
     @InjectRepository(Article) private articleRepository: Repository<Article>
   ) {}
 
   async getArticle(id: string): Promise<Article | null> {
     const findedArticle = await this.articleRepository.findOneBy({ id });
-    if (!Article) {
-      throw new NotFoundException(`Article whith id: ${id} is not found!`);
+    if (!findedArticle) {
+      this.logger.warn(`Article whith id: ${id} is not found`)
+      throw new NotFoundException(`Article whith id: ${id} is not found`);
     }
     return findedArticle;
   }
@@ -67,6 +69,7 @@ export class ArticleService {
       await this.articleRepository.save(createdArticle);
     } catch(error) {
         if (error) {
+          this.logger.error('Article is not created -' + ` params: ${createdArticle}`);
           throw new HttpException('Article is not created', HttpStatus.BAD_REQUEST);
         }   
     }
