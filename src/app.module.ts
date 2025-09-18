@@ -10,8 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
-import LogsMiddleware from 'utils/logs.middleware';
-//import KeyvRedis from '@keyv/redis';
+import LogsMiddleware from '../utils/logs.middleware';
 
 @Module({
   imports: [
@@ -26,16 +25,6 @@ import LogsMiddleware from 'utils/logs.middleware';
       entities: [User, Article],
       synchronize: false,
     }),
-    /*CacheModule.registerAsync({
-      isGlobal: true,
-      useFactory: async () => {
-        return {
-          stores: [
-            new KeyvRedis(`redis://redis:6377`)
-          ]
-        }
-      }
-    }),*/
     CacheModule.register({
       isGlobal: true,
       store: redisStore,

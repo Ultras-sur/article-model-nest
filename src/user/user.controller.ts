@@ -8,16 +8,16 @@ export class UserController {
 
     @Get()
     async getUsers() {
-
         return this.userService.findAll();
     }
 
     @Get(":id")
     async getUser(@Param("id") id: string ) {
         const findedUser = await this.userService.findUserById(id);
-        return this.userService.sanitizeUser(findedUser);
+        findedUser.password = 'undefined';
+        return findedUser;
     }
-
+    
     @Post()
     async createUser(@Body() createUserData: CreateUserDTO) {
         console.log(createUserData)

@@ -1,7 +1,12 @@
-import { IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 export class UpdateArticleDto {
+  @ApiProperty({ description: "Title of article", required: true})
+  @IsOptional()
   @IsString()
-  title?: string;
+  readonly title?: string;
+  @ApiProperty({ description: "Description to article", required: true})
+  @IsOptional()
   @IsString()
-  description?: string;
+  readonly description?: string;
 }

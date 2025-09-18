@@ -8,6 +8,7 @@ import * as session from 'express-session';
 import cookieParser = require('cookie-parser');
 import passport = require('passport');
 import getLogLevels from '../utils/logLevels';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 require('dotenv').config();
 
 
@@ -16,10 +17,17 @@ const logger = new Logger();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const config = new DocumentBuilder()
+    .setTitle('Notes API')
+    .setDescription('The notes API description')
+    .setVersion('1.0')
+    .build();
   logger: getLogLevels(process.env.NODE_ENV === 'production')
   app.useGlobalPipes(
   new ValidationPipe({
     transform: true,
+    //whitelist: true,
+    //transformOptions: { enableImplicitConversion: true }
   }),
 );
 
@@ -51,6 +59,8 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(passport.initialize());
   app.use(passport.session());
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
   
   await redisClient.connect();
   await app.listen(process.env.PORT ?? 5000);

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SanitizedUser, UserService } from './user.service';
+import { UserService } from './user.service';
 import { User } from './../../entity/user.entity';
 import { AppModule } from './../../src/app.module';
 import { INestApplication } from '@nestjs/common';
@@ -23,7 +23,7 @@ function generateUserFixtures(quantity) {
 describe('UserService', () => {
   let app: INestApplication;
   let userService: UserService;
-  let createdUsers: SanitizedUser[] = [];
+  let createdUsers: sanitizedUser[] = [];
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -47,14 +47,14 @@ describe('UserService', () => {
       it('created', async () => {
       await Promise.all(fixtures.map(async user => {
           const createdUser = await userService.createUser(user);
-          expect(createdUser).toBeInstanceOf(SanitizedUser);
+          expect(createdUser).toBeInstanceOf(User);
           createdUsers.push(createdUser);
         }))
       })
     it('throw error for unique login', async () => {
       await Promise.all(fixtures.map(async user => {
         //const createdUser = await userService.createUser(user);
-        expect(async () => await userService.createUser(user)).rejects.toThrow('is already exists');
+        expect(async () => await userService.createUser(user)).rejects.toThrow(`User with login ${user.login} is already exists`);
       }))
     })
   })
@@ -83,9 +83,9 @@ describe('UserService', () => {
     })
     it('check deleted in database', async () => {
       await Promise.all(createdUsers.map(async user => {
-      //const deleteduser = await userService.getUser(user.id);
-      //expect(deleteduser).toBe(null);
-      expect(async () => await userService.getUser(user.id)).rejects.toThrow();
+      const deleteduser = await userService.getUser(user.id);
+      expect(deleteduser).toBe(null);
+      //expect(async () => await userService.getUser(user.id)).rejects.toThrow();
       }))
     })
   })

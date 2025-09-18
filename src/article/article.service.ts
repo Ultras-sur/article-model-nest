@@ -19,7 +19,8 @@ private readonly logger = new Logger(ArticleService.name);
     const findedArticle = await this.articleRepository.findOneBy({ id });
     if (!findedArticle) {
       this.logger.warn(`Article whith id: ${id} is not found`)
-      throw new NotFoundException(`Article whith id: ${id} is not found`);
+      //throw new NotFoundException(`Article whith id: ${id} is not found`);
+      return null;
     }
     return findedArticle;
   }
@@ -30,6 +31,8 @@ private readonly logger = new Logger(ArticleService.name);
   }
 
   async getArticlesPaginate(findOptions: FindOptionsDto): Promise<PageDTO<Article>> {
+
+        console.log(findOptions)
     const articlesAndCount = await this.articleRepository.findAndCount({
       select: {
         id: true,
@@ -55,6 +58,7 @@ private readonly logger = new Logger(ArticleService.name);
     });
     const [ articles, articlesCount ] = articlesAndCount;
     const pageMeta = new PageMetaDTO(articlesCount, findOptions);
+    console.log(pageMeta)
     return new PageDTO(articles, pageMeta);
   }
 
@@ -63,10 +67,10 @@ private readonly logger = new Logger(ArticleService.name);
   }
 
   async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
-    console.log(createArticleDto)
+    //console.log(createArticleDto)
     const createdArticle = this.articleRepository.create(createArticleDto);
     try {
-      await this.articleRepository.save(createdArticle);
+      await this.articleRepository.save({ ...createdArticle, createdAt: new Date()} );
     } catch(error) {
         if (error) {
           this.logger.error('Article is not created -' + ` params: ${createdArticle}`);
@@ -81,7 +85,7 @@ private readonly logger = new Logger(ArticleService.name);
     if(!article) {
       throw new NotFoundException(`Article whith id: ${id} is not found!`);
     }
-    await this.articleRepository.update(id, updateArticle);
+    await this.articleRepository.update(id, { ...updateArticle, updatedAt: new Date()});
     return this.getArticle(id);
   }
 
