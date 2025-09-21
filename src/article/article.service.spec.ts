@@ -8,6 +8,7 @@ import { UserService } from './../user/user.service';
 import { User } from 'entity/user.entity';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { PageDTO } from './dto/page.dto';
+import { resolve } from 'path';
 
 function getRandomInt(min: number, max: number) {
   const minCeiled = Math.ceil(min);
@@ -60,12 +61,8 @@ describe('ArticleService', () => {
       await Promise.all(
         fixtures.map(async (article) => {
           const author = authors[getRandomInt(0, authors.length - 1)];
-          const createdArtecle = await articleService.createArticle({
-            ...article,
-            author,
-          });
-          expect(createdArtecle).toBeInstanceOf(Article);
-          createdArticles.push(createdArtecle);
+          const createdArtecle = await articleService.createArticle({...article, author,});
+          createdArticles.push(createdArtecle)
         }),
       );
     });

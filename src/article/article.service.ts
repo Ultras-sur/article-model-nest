@@ -66,16 +66,16 @@ private readonly logger = new Logger(ArticleService.name);
   }
 
   async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
-    const createdArticle = this.articleRepository.create(createArticleDto);
+    let createdArticle = this.articleRepository.create(createArticleDto);
     try {
-      await this.articleRepository.save({ ...createdArticle, createdAt: new Date()} );
+     return this.articleRepository.save({ ...createdArticle, createdAt: new Date()} );
     } catch(error) {
         if (error) {
           this.logger.error('Article is not created -' + ` params: ${createdArticle}`);
           throw new HttpException('Article is not created', HttpStatus.BAD_REQUEST);
         }   
     }
-    return createdArticle;
+    //return createdArticle;
   }
 
   async updateArticle(id: string, updateArticle: UpdateArticleDto): Promise<Article | null> {
