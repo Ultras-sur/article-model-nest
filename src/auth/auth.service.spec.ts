@@ -79,7 +79,8 @@ describe('AuthService', () => {
                     findUser.mockResolvedValue(null);
                 })
                 it('should throw an error', async () => {
-                    await expect(authService.validateUser({ login: userData.login, password: userData.password }))
+                    const { login, password } = userData;
+                    await expect(authService.validateUser({ login, password }))
                     .rejects.toThrow();
                 })
             })

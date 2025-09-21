@@ -8,8 +8,6 @@ import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
 import LogsMiddleware from '../utils/logs.middleware';
 
 @Module({
@@ -24,12 +22,6 @@ import LogsMiddleware from '../utils/logs.middleware';
       database: process.env.POSTGRES_DB,
       entities: [User, Article],
       synchronize: false,
-    }),
-    CacheModule.register({
-      isGlobal: true,
-      store: redisStore,
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
     }),
     UserModule,
     ArticleModule,

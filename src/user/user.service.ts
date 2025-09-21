@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entity/user.entity';
 import { Repository } from 'typeorm';
@@ -51,7 +51,7 @@ export class UserService {
             if (error?.code === '23505') {
               throw new HttpException(`User with login ${createUserDTO.login} is already exists`, HttpStatus.BAD_REQUEST);
             }
-            throw new HttpException('User is not created', HttpStatus.BAD_REQUEST);
+            throw new HttpException('User is not created', HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return createdUser;
     }
@@ -79,9 +79,11 @@ export class UserService {
 
     async setRefreshToken(refreshToken: string, userId: string) {
         const hashedRefreshToken = await hash(refreshToken, 10);
-        await this.userRepository.update(userId, {
+        const user = await this.userRepository.update(userId, {
             hashedRefreshToken
         });
+        console.log(user)
+        return user;
     }
 
     async removeRefreshToken(userId: string) {

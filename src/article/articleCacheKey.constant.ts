@@ -1,0 +1,1 @@
+export const GET_ARTICLE_CACHE_KEY = 'GET_ARTICLE_CACHE';

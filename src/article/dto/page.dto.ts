@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PageMetaDTO } from './page-meta.dto';
-import { Article } from 'entity/article.entity';
+import { Article } from '../../../entity/article.entity';
 
 export class PageDTO<T> {
   @ApiProperty({ description: "Array of articles", type: Article, isArray: true })

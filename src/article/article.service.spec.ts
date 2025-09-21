@@ -17,7 +17,7 @@ function getRandomInt(min: number, max: number) {
 
 function generateArticleFixtures(quantity) {
   const articles = [];
-  for (let number = 1; number !== quantity; number += 1) {
+  for (let number = 0; number <= quantity; number += 1) {
     articles.push({
       title: `Paper${number}`,
       description: `Article of paper${number}`,

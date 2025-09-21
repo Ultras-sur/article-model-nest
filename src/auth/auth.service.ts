@@ -17,7 +17,7 @@ export class AuthService {
   ) {}
 
 
-  async register(registrationData: RegisterDto): Promise<User> {
+  async register(registrationData: RegisterDto): Promise<Omit<User, "password"|"hashedRefreshToken"|"id">> {
     const userIsExist = await this.userService.findUserByLogin(registrationData?.login);
     if (userIsExist) {
       throw new HttpException(`User with login ${registrationData.login} is already exists!`, HttpStatus.BAD_REQUEST);
@@ -26,8 +26,8 @@ export class AuthService {
     let createdUser;
     try {
       createdUser = await this.userService.createUser({ ...registrationData, password: hashedPassword});
-      createdUser.password = 'undefined';
-      return createdUser;
+      const { hashedRefreshToken, password, ...user} = createdUser;
+      return user;
     } catch (err) {
       throw new HttpException('User is not created', HttpStatus.INTERNAL_SERVER_ERROR);
     }

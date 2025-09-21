@@ -31,8 +31,7 @@ private readonly logger = new Logger(ArticleService.name);
   }
 
   async getArticlesPaginate(findOptions: FindOptionsDto): Promise<PageDTO<Article>> {
-
-        console.log(findOptions)
+        //console.log(findOptions)
     const articlesAndCount = await this.articleRepository.findAndCount({
       select: {
         id: true,
@@ -58,7 +57,7 @@ private readonly logger = new Logger(ArticleService.name);
     });
     const [ articles, articlesCount ] = articlesAndCount;
     const pageMeta = new PageMetaDTO(articlesCount, findOptions);
-    console.log(pageMeta)
+    //console.log(pageMeta)
     return new PageDTO(articles, pageMeta);
   }
 
@@ -67,7 +66,6 @@ private readonly logger = new Logger(ArticleService.name);
   }
 
   async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
-    //console.log(createArticleDto)
     const createdArticle = this.articleRepository.create(createArticleDto);
     try {
       await this.articleRepository.save({ ...createdArticle, createdAt: new Date()} );
