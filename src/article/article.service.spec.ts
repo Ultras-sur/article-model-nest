@@ -61,8 +61,8 @@ describe('ArticleService', () => {
       await Promise.all(
         fixtures.map(async (article) => {
           const author = authors[getRandomInt(0, authors.length - 1)];
-          const createdArtecle = await articleService.createArticle({...article, author,});
-          createdArticles.push(createdArtecle)
+          const createdArticle = await articleService.createArticle({...article, author,});
+          createdArticles.push(createdArticle)
         }),
       );
     });
